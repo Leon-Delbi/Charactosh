@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Charactosh</title>
+        <meta charset="utf-8" />
+        <meta content="" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="stylesheet" type="text/css" href="./css/style.min.css" />
+        <link rel="stylesheet" type="text/css" href="./css/bzw_style.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="./favicons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" href="./favicons/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="./favicons/favicon-16x16.png" sizes="16x16" />
+        <link rel="manifest" href="./favicons/manifest.json" />
+        <link rel="mask-icon" href="./favicons/safari-pinned-tab.svg" color="#5bbad5" />
+        <link rel="shortcut icon" href="./favicons/favicon.ico" />
+        <meta name="msapplication-config" content="./favicons/browserconfig.xml" />
+        <meta name="theme-color" content="#ffffff" />
+        <style id="theme"></style>
+        <style>
+
+        .clock {
+            position: absolute;
+            top: 12px;
+            right: 22px;
+            text-align: right;
+            color: #fff;
+        }
+
+        .clock .time {
+            font-size: 36px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .clock .date {
+            margin-top: 3px;
+            font-size: 14px;
+        }
+        .system-tray {
+            display: flex;
+            align-items: center;
+            padding-right: 5px;
+        }
+
+        .tray-item {
+            height: 24px;
+            background: rgba(255, 255, 255, 0.0);
+            padding: 0 8px;
+            margin-left: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            min-width: 60px;
+            color: white;
+        }
+
+        #system-tray-clock {
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* --- Toggle Sidebar Button Styling --- */
+        #toggle-sidebar-btn {
+            min-width: auto;
+            width: 24px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+        #toggle-sidebar-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        #toggle-sidebar-btn i {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+        /* Rotates arrow direction based on sidebar state */
+        .longhorn-sidebar.hidden ~ #chat_bar #toggle-sidebar-btn i {
+            transform: rotate(180deg);
+        }
+
+        .longhorn-sidebar.hidden {
+             transform: translateX(100%);
+        }
+            
+        /* --- Longhorn Sidebar Styles --- */
+        .longhorn-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 170px;
+            /* Adjust height to leave room for the bottom chat bar */
+            height: calc(100vh - 30px); 
+            background: linear-gradient(to right, #4176cf, #4a8df1);
+            border-left: 1px solid #2a55a0;
+            box-shadow: inset 1px 0px 3px rgba(255,255,255,0.3);
+            display: flex;
+            flex-direction: column;
+            color: white;
+            box-sizing: border-box;
+            z-index: 99;
+            opacity: 0.7;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .sidebar-header {
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        }
+
+        /* Search Tile */
+        .search-tile input {
+            width: 100%;
+            border: 1px solid #2a55a0;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 2px 4px;
+            font-size: 11px;
+            box-sizing: border-box;
+        }
+        .search-tile input::placeholder {
+            color: #d0e0ff;
+        }
+
+        /* Quick Launch Tile */
+        .quick-launch-item {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            margin: 4px 0;
+            cursor: pointer;
+        }
+        .quick-launch-item img {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+
+        /* Slide Show Tile */
+        .slideshow-img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #1a3560;
+            display: block;
+        }
+
+        /* Clock Tile */
+        .analog-clock-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .analog-clock {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #eef3fa;
+            border: 6px solid #a2bfe8;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .analog-clock::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #222;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background: #333;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+        }
+        .hour-hand {
+            width: 4px;
+            height: 30px;
+            background: #222;
+        }
+        .minute-hand {
+            width: 3px;
+            height: 42px;
+            background: #555;
+        }
+
+        /* Sidebar Branding Footer */
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px;
+            opacity: 0.15;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 2px;
+            transform: rotate(-90deg);
+            transform-origin: left bottom;
+            position: absolute;
+            bottom: 40px;
+            left: 25px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        </style>
+        <script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
+        <script src="https://code.createjs.com/1.0.0/preloadjs.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+        <script src="./js/lib/seedrandom.min.js"></script>
+        <script src="./js/lib/socket.io-1.4.5.js"></script>
+        <script src="./espeak.js"></script>
+        <script src="./js/lib/jquery.contextMenu.min.js"></script>
+        <script src="./js/platform.js"></script>
+        <script src="https://www.youtube.com/iframe_api"></script>
+        <script src="bwr_core.js"></script>
+
+    </head>
+    <body oncontextmenu="return false">
+        <div id="page_login" class="page">
+            <div id="login_apps" class="app_showcase"></div>
+            <div id="login_readme">
+                <marquee><gay-rainbow>Welcome to Charactosh!</gay-rainbow></marquee>
+                The real one. All clones are unofficial.
+                <hr />
+                <a href="readme.html">README</a> <a href="faq.html">FAQ</a> <a href="rules.html">RULES</a>
+                <br />
+                <h5>Artwork by Richard. Copying servers are unofficial.</h5>
+            </div>
+            <div class="clock">
+                <div class="time" id="time"></div>
+                <div class="date" id="date"></div>
+            </div>
+            <div id="login_card" style="display: none;">
+                <input id="login_name" type="text" placeholder="Name" />
+                <input id="login_room" list="login_rooms" type="text" placeholder="Room ID (Optional)" />
+                <datalist id="login_rooms">
+                    <option value="default"></option>
+                    <option value="bonzi_tv"></option>
+                    <option value="ai"></option>
+                </datalist>
+                <div id="login_error" style="display: none;"></div>
+                <div id="login_go"></div>
+            </div>
+            <div id="login_load">loading</div>
+            <div id="login_version">Version 1.0.8</div>
+            <div id="login_social">
+                <a href="https://www.youtube.com/@RichardTheSlovakKittyBoy" target="_blank" style="margin-right: 10px;"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div id="page_error" class="page" style="display: none;">
+            <div id="error_cont" class="message_cont">
+                <img src="./img/error/logo.png">
+                <br>
+                An error has occurred. Please try reloading the page. If that doesn't work, report the bug.
+            </div>
+        </div>
+        <div id="page_ban" class="page" style="display: none;">
+            <div id="ban_cont" class="message_cont">
+                <img src="./img/ban/logo.png">
+                <br />
+                <h1>You have been banned from Charactosh</h1>
+                <br />
+                <br />
+                <b>Reason: </b><span id="ban_reason"></span><br />
+                <b>Deadline: </b><span id="ban_end"></span><br />
+            </div>
+        </div>
+        <div id="page_kick" class="page" style="display: none;">
+            <div id="kick_cont" class="message_cont">
+                <img src="./img/ban/logo.png">
+                <br />
+                <h1>You got kicked from Charactosh</h1>
+                <br />
+                <br />
+                <b>Reason: </b><span id="kick_reason"></span><br />
+            </div>
+        </div>
+
+        <div id="start_menu" hidden>
+            <div id="start_menu_pfp"></div>
+                <input id="start_menu_name" autocorrect="off" maxlength="25" value="Anonymous">
+                <div id="start_menu_body">
+                <div id="settings_button" class="start_menu_item">
+                <img class="start_menu_item_icon" src="/img/desktop/cp.webp">
+                <div class="start_menu_item_details">
+                    <div class="start_menu_item_name">Settings</div>
+                    <div class="start_menu_item_description">Configure your settings.</div>
+                </div>
+            </div>
+                <div id="help_button" class="start_menu_item">
+                <img class="start_menu_item_icon" src="/img/desktop/has.png">
+                <div class="start_menu_item_details">
+                    <div class="start_menu_item_name">Help</div>
+                    <div class="start_menu_item_description">See the commands and more.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div id="content">
+            <div id="bonzi_tv"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+            <div id="room_info">
+                Room ID - <span class="room_id">???</span>
+                <br />
+                <span id="room_public">This room is public.</span>
+                <span id="room_private">This room is private.</span>
+                <span id="room_owner">
+                    <br />
+                    You are the owner of this room.
+                </span>
+                <div id="bonzicoins" onclick="coinPopup()"><b>You have <span class="coin_count">0</span> Characbucks. <img src="shekel.gif" width=16></b></div>
+            </div>
+
+            <!-- <button id="toggle_sidebar" class="sidebar-toggle-btn">Hide Sidebar</button> -->
+            
+            <div class="longhorn-sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-header">
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-header">
+                        <span>Quick Launch</span>
+                        <i class="fas fa-bolt" style="color: #ffd700;"></i>
+                    </div>
+                    <div class="quick-launch-item" id="ql_settings">
+                        <img src="../img/desktop/cp.webp" alt="Control Panel">
+                        <span>Settings</span>
+                    </div>
+                    <div class="quick-launch-item" id="ql_help">
+                        <img src="../img/desktop/has.png" alt="Help and Support">
+                        <span>Help</span>
+                    </div>
+                    <div class="quick-launch-item" id="ql_games">
+                        <img src="../img/desktop/games.png" alt="Games">
+                        <span>Games</span>
+                    </div>
+                    <div class="quick-launch-item" id="ql_logs">
+                        <img src="https://files.catbox.moe/u38dfi.webp" alt="Logs">
+                        <span>Logs</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-header">
+                        <span id="sidebar-date-label">December 01</span>
+                        <i class="far fa-clock"></i>
+                    </div>
+                    <div class="analog-clock-container">
+                        <div class="analog-clock">
+                            <div class="hand hour-hand" id="sidebar-hour-hand"></div>
+                            <div class="hand minute-hand" id="sidebar-min-hand"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="chat_log_button" style="display:none";></div>
+            <div id="chat_log" class="window" style="display: none;">
+                <div class="window_header">
+                    Logs
+                    <div id="chat_log_close" class="window_close"></div>
+                </div>
+                <div class="window_body">
+                    <div id="chat_log_content"></div>
+                </div>
+                <div id="chat_log_resize"></div>
+            </div>
+            <table id="chat_bar">
+                <tbody>
+                    <tr>
+                        <td id="chat_send">Send</td>
+                        <td id="start_button" onclick="$('#start_menu').toggle">+</td>
+                        <td id="chat_message_cont">
+                           <input 
+                               id="chat_message" 
+                               type="text" 
+                               placeholder="To chat click here or press any key on your keyboard | /help for help" /></td>
+                        <td id="chat_tray">
+                            <div class="system-tray">
+                                <div id="system-tray-clock" class="tray-item">00:00 PM</div>
+                                <div id="toggle-sidebar-btn" class="tray-item" title="Toggle Longhorn Sidebar">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </div>
+                                <div id="btn_tile" class="tray_btn"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <canvas id="agent_canvas" width="100" height="100"></canvas>
+
+            <script>
+function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    $("#system-tray-clock").text(`${hours}:${minutes} ${ampm}`);
+    
+    const timeOptions = {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    };
+
+    const dateOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    document.getElementById('time').textContent =
+        now.toLocaleTimeString('en-US', timeOptions);
+
+    document.getElementById('date').textContent =
+        now.toLocaleDateString('en-US', dateOptions);
+
+    // --- Dynamic Updates for the Sidebar ---
+    
+    // 1. Sidebar Date Label (e.g., "June 04")
+    const sidebarMonth = now.toLocaleDateString('en-US', { month: 'long' });
+    const sidebarDay = now.getDate().toString().padStart(2, '0');
+    document.getElementById('sidebar-date-label').textContent = `${sidebarMonth} ${sidebarDay}`;
+
+    // 2. Sidebar Analog Clock Hands Rotation
+    const currentMin = now.getMinutes();
+    const currentHr = now.getHours();
+    
+    const minDegrees = (currentMin / 60) * 360;
+    const hourDegrees = ((currentHr % 12) / 12) * 360 + (currentMin / 60) * 30;
+
+    document.getElementById('sidebar-min-hand').style.transform = `translateX(-50%) rotate(${minDegrees}deg)`;
+    document.getElementById('sidebar-hour-hand').style.transform = `translateX(-50%) rotate(${hourDegrees}deg)`;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+    $("#toggle-sidebar-btn").on("click", function() {
+    $(".longhorn-sidebar").toggleClass("hidden");
+});
+
+$(document).ready(function() {
+    $("#ql_logs").on("click", function() {
+        $("#chat_log_button").click();
+    });
+
+    // Create an observer to watch when the chat log window changes visibility
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'style') {
+                const isHidden = $("#chat_log").is(':hidden');
+                if (isHidden) {
+                    // Force the button to stay hidden when the window closes
+                    $("#chat_log_button").hide();
+                }
+            }
+        });
+    });
+
+    // Start observing the chat log window for style changes
+    const chatLogEl = document.getElementById('chat_log');
+    if (chatLogEl) {
+        observer.observe(chatLogEl, { attributes: true });
+    }
+});
+                
+</script>
+            
+        </div>
+        <div id="titlebar">
+            <div id="minimize"></div>
+            <div id="maximize"></div>
+            <div id="close"></div>
+        </div>
+    </body>
+</html>
