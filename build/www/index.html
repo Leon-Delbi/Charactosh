@@ -320,10 +320,48 @@
 
         <div id="content">
             <div id="bonzi_tv"></div>
+            <div class="top-bar-wrapper ng-cloak" id="top_bar" style="display: none;">
+                <div class="top-bar-inner">
+                    <div class="top-bar-item top-bar-left"><img src="/bonzi/bonzi_sg-32x32.png" alt="BonziWORLD" title="BonziWORLD" /></div>
+                    <div class="top-bar-item top-bar-middle"></div>
+                    <div class="top-bar-item top-bar-right">
+                        <div class="left-group">
+                            <span hidden>
+                                <div class="top-bar-user tbr-item" id="tb-user-dd-toggle">
+                                    <div class="directory-wrapper">
+                                        <div class="directory-badge" title="Directory" data-ng-click="global.sbCtrl.changeView('directory:default');"><i class="fas fa-comments" aria-hidden="true"></i><span> Rooms</span></div>
+                                    </div>
+                                </div>
+                            </span>
+                            <div class="top-discord-user tbr-item" id="tb-discord-toggle">
+                                <div class="tbr-i-inner">
+                                    <div class="directory-badge" title="Directory" onclick="window.open('https://www.roblox.com/games/124665028451717/WXPCE-Sandbox#!/about')">
+                                        <img src="roblox_black.png" width="16" /><span> Roblox</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="top-roblox-user tbr-item" id="tb-roblox-toggle">
+                                <div class="directory-wrapper">
+                                    <div class="badge" title="Games" id="games_button">🎮<span> Games</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-bar-user" id="tb-user-dd-toggle">
+                            <pre><button onclick="hideUI()">Hide UI</button></pre>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="top-bar-wrapper ng-cloak" id="sub_top_bar">
+                <div class="top-bar-inner">
+                    <div class="top-bar-item top-bar-left top-bar-room-info">
+                        <div class="room-name-wrapper ng-cloak" data-ng-if="global.room">
+                            <div class="room-icon" title="Room Icon"><i class="far fa-comments" aria-hidden="true"></i></div>
+                            <div class="room-name" title="Room Name"><span class="room-name" data-ng-bind="global.room.name"></span></div>
+                        </div>
+                    </div>
+                    <div class="top-bar-item top-bar-middle"></div>
+                    <div class="top-bar-item top-bar-right">
                     </div>
                 </div>
             </div>
